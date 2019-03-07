@@ -1,0 +1,4 @@
+[submodule "cryptoauthlib"]
+	path = cryptoauthlib
+	url = https://github.com/maixuanhan/cryptoauthlib.git
+	branch = master
