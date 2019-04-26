@@ -19,44 +19,60 @@ so there is likely some manual configuration that would be needed at this stage
 
 To build the library:
 
+```
 > make libateccssl
+```
 
 To run the test program:
 
+```
 > make test
+```
 
 To extract certificates (if the engine is added to the openssl.cnf file):
 
+```
 > openssl engine ateccx08 -t -post GET_DEVICE_CERT:./device.der
 > openssl engine ateccx08 -t -post GET_SIGNER_CERT:./signer.der
+```
 
 Otherwise you'll have to use an interactive openssl session (see openssl engine -h and engine -vvv for details)
 
+```
 > openssl
 
 OpenSSL> engine dynamic -pre SO_PATH:/<full path to libeccssl.so> -pre LIST_ADD:1 -pre ID:ateccx08 -pre LOAD
 OpenSSL> engine ateccx08 -t -post GET_DEVICE_CERT:./device.der
 OpenSSL> engine ateccx08 -t -post GET_SIGNER_CERT:./signer.der
+```
 
 Then to verify the certs:
+
+```
 > openssl x509 -in device.der -inform der -text -noout
 > openssl x509 -in signer.der -inform der -text -noout
+```
 
 To set up your openssl.cnf file
 
 Find which openssl.cnf file your instance is using you can:
 
+```
 > openssl version -a | grep OPENSSLDIR
 OPENSSLDIR: "/usr/lib/ssl"
+```
 
 will tell you the base location where openssl is looking for the openssl.cnf file. It may be a symbolic link to another location
 
+```
 > ls -l /usr/lib/ssl
 lrwxrwxrwx 1 root root 14 Apr 24 15:22 certs -> /etc/ssl/certs
 lrwxrwxrwx 1 root root 20 Jan 31 05:53 openssl.cnf -> /etc/ssl/openssl.cnf
+```
 
 To set up the openssl.cnf to use the engine:
 
+```
 # At the top:
 
 openssl_conf = openssl_init
@@ -75,6 +91,7 @@ engine_id = ateccx08
 dynamic_path = <full path to libateccssl.so>
 device_key_slot = 0
 init = 0
+```
 
 To use the engine in an application you can reference the openssl tests (test/openssl/test_engine.c) but the basic principle is that
 if the openssl.cnf file is configured correctly all an application really needs to do is add a call to OPENSSL_config if it is not already
